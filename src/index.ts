@@ -11,12 +11,14 @@ import { createBird } from "./bird";
 import { createParabole } from "./parabole";
 import { createLine } from "./line";
 import { clamp, v2Dot, getRoots, getAOS } from "./util/math";
+import { createAxis } from "./axis";
 
 // padding comes from Bootstrap css container class => 15 px on each side.
 const padding = 30;
 // 1170 is the max width of a Bootstrap container
 const width = clamp(window.innerWidth, 0, 1170) - padding;
-const height = clamp(window.innerHeight, 0, 658) - padding;
+const height = width;
+// const height = clamp(window.innerHeight, 0, 658) - padding;
 
 let a = -0.1;
 let b = 0;
@@ -155,23 +157,27 @@ let parabole = createParabole(startDragging, xValues, yValues);
 let dragLine = createLine(startDragging, mouse, camera);
 scene.add(dragLine);
 
+const xAxis = createAxis(new Vector2(-40, 0), new Vector2(40, 0));
+const yAxis = createAxis(new Vector2(0, -40), new Vector2(0, 40));
+
+xAxis.forEach((obj) => {
+  scene.add(obj);
+});
+yAxis.forEach((obj) => {
+  scene.add(obj);
+});
+
 const animate = function () {
   requestAnimationFrame(animate);
 
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObjects(scene.children);
-  for (let j = 0; j < scene.children.length; j++) {
-    // @ts-ignore - there's a type error here, seems it's a bug in three js typing
-    scene.children[j].material.color.set(0x00ff00);
-  }
+  const birdInScene = scene.children.find((child) => child.name === "Bird");
 
-  for (let i = 0; i < intersects.length; i++) {
-    const obj = intersects[i].object;
-    if (obj.name === "Bird") {
-      // @ts-ignore - there's a type error here, seems it's a bug in three js typing
-      obj.material.color.set(0xff0000);
-    }
+  if (birdInScene) {
+    // @ts-ignore - there's a type error here, seems it's a bug in three js typing
+    birdInScene.material.color.set(0x00ff00);
   }
 
   const hoveringBird = intersects.find(
@@ -179,6 +185,8 @@ const animate = function () {
   );
   if (hoveringBird) {
     hovering = true;
+    // @ts-ignore - there's a type error here, seems it's a bug in three js typing
+    hoveringBird.object.material.color.set(0xff0000);
   } else {
     hovering = false;
   }
@@ -228,6 +236,8 @@ const animate = function () {
     } else {
       releaseAnimationIndex = 0;
       released = false;
+      // change name of old bird object
+      bird.name = "OldBird";
       bird = createBird();
       scene.add(bird);
     }
