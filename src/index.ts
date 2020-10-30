@@ -17,8 +17,8 @@ import { createAxis } from "./axis";
 const padding = 30;
 // 1170 is the max width of a Bootstrap container
 const width = clamp(window.innerWidth, 0, 1170) - padding;
-const height = width;
-// const height = clamp(window.innerHeight, 0, 658) - padding;
+// const height = width;
+const height = clamp(window.innerHeight, 0, 658) - padding;
 
 let a = -0.1;
 let b = 0;
